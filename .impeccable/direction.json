@@ -1,0 +1,223 @@
+{
+  "title": "Choose the visual world for Klora Fitness",
+  "question": "Pink pastel is pinned. The roll assigned The Program Card. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Program Card",
+      "kicker": "THE ROLL",
+      "lineage": "a PT's clipboard program sheets, sticky tabs and highlighters",
+      "thesis": "Every screen is a sheet off her clipboard: ruled set grids, a pink highlighter for today, a coloured tab per client.",
+      "palette": [
+        "#fff5f8",
+        "#f7c6d9",
+        "#e2588f",
+        "#3a1f2b",
+        "#c9e8dc"
+      ],
+      "materials": [
+        "ruled program sheet",
+        "highlighter wash",
+        "sticky index tabs",
+        "pen-struck marks"
+      ],
+      "viewport": "Today's session as one sheet: a big hand-numbered set grid, the current row washed in highlighter pink, Start pinned low.",
+      "risk": "Goes twee if the stationery is drawn literally instead of as a strict grid system.",
+      "raised": [
+        {
+          "from": "challenger-centre-rail",
+          "raise": "States are printed marks: hairline set at rest, filled when logged, struck through with a pen line when done."
+        },
+        {
+          "from": "challenger-high-density",
+          "raise": "A strict hairline module system with small header tabs, so the trainer roster packs a whole client book onto one screen."
+        },
+        {
+          "from": "challenger-gate-board",
+          "raise": "A client whose status changed (new check-in, missed week) stays highlighted until she has seen it."
+        },
+        {
+          "from": "challenger-exposure",
+          "raise": "One hot pink is reserved for 'now / needs you' and means nothing else anywhere."
+        }
+      ]
+    },
+    {
+      "id": "model-pick",
+      "label": "The Pastel Dumbbell Rack",
+      "kicker": "MY PICK",
+      "lineage": "coated neoprene hand-weights racked by colour",
+      "thesis": "Load is colour: pink, lilac, mint, butter tiers like a dumbbell rack, in soft rounded vinyl.",
+      "palette": [
+        "#fdf2f6",
+        "#f6b8cf",
+        "#cdb8f0",
+        "#bfe7d4",
+        "#f8e7a6"
+      ],
+      "materials": [
+        "matte neoprene",
+        "rounded vinyl",
+        "colour-coded tiers"
+      ],
+      "viewport": "A rack of rounded load chips across the top, today's lifts as big soft pills beneath.",
+      "risk": "Familiar: candy-pastel fitness apps are the look most runs land on for this brief."
+    },
+    {
+      "id": "challenger-gate-board",
+      "label": "Boarding Pass & Gate Board",
+      "verdict": "declined",
+      "lineage": "airport pass segments and departure boards",
+      "thesis": "Clients ranked like departures; changes stay lit.",
+      "palette": [
+        "#ffffff",
+        "#1d1d1f",
+        "#ff4f8b"
+      ],
+      "materials": [
+        "segmented pass",
+        "split-flap rows"
+      ],
+      "viewport": "A board of clients ordered by next session.",
+      "risk": "Travel metaphor; clients would not recognise it.",
+      "case": "Fuses well for the roster, poorly for logging a set.",
+      "kept": "Changed rows hold their highlight until seen.",
+      "hero": "https://impeccable.style/worlds/cards/vernacular-ephemera-boarding-pass-and-gate-board-hero.webp"
+    },
+    {
+      "id": "challenger-transit",
+      "label": "Midnight Transit Diagram",
+      "verdict": "declined",
+      "lineage": "enamel metro maps",
+      "thesis": "Each client a coloured line through their programme.",
+      "palette": [
+        "#121a3a",
+        "#e23b4e",
+        "#2f6fe0",
+        "#f3b33d"
+      ],
+      "materials": [
+        "enamel",
+        "porcelain ticks"
+      ],
+      "viewport": "A line map of a client's training blocks.",
+      "risk": "Midnight ground contradicts the pinned pink pastel.",
+      "case": "Loses both axes against the brief.",
+      "kept": "Declined without a raise: its discipline is already carried by the program grid.",
+      "hero": "https://impeccable.style/worlds/cards/wayfinding-cartography-signage-midnight-transit-diagram-hero.webp"
+    },
+    {
+      "id": "challenger-high-density",
+      "label": "Japanese High-Density Web",
+      "verdict": "declined",
+      "lineage": "packed Japanese portal pages",
+      "thesis": "Tiny type, boxed modules, utility tabs.",
+      "palette": [
+        "#ffffff",
+        "#111111",
+        "#e60033",
+        "#d9d9d9"
+      ],
+      "materials": [
+        "hairline modules",
+        "header tabs"
+      ],
+      "viewport": "A mosaic of ruled client modules.",
+      "risk": "Too dense for a client mid-set.",
+      "case": "Strong for the trainer desk, wrong for the gym floor.",
+      "kept": "Hairline module system with small header tabs.",
+      "hero": "https://impeccable.style/worlds/cards/japanese-high-density-web-hero.webp"
+    },
+    {
+      "id": "challenger-centre-rail",
+      "label": "Centre-Rail Reference Setting",
+      "verdict": "declined",
+      "lineage": "ruled reference editions",
+      "thesis": "Twin columns around a rail of keys.",
+      "palette": [
+        "#efe8dc",
+        "#1a1a1a",
+        "#c0392b"
+      ],
+      "materials": [
+        "ruled hairlines",
+        "printed marks"
+      ],
+      "viewport": "Two columns of sets around a rail.",
+      "risk": "Bookish; no one reads a workout like an edition.",
+      "case": "Loses both axes.",
+      "kept": "States as printed marks: hairline, filled, struck.",
+      "hero": "https://impeccable.style/worlds/cards/rw-centre-rail-reference-setting-hero.webp"
+    },
+    {
+      "id": "challenger-feed",
+      "label": "Vertical Video Feed",
+      "verdict": "declined",
+      "lineage": "short-video apps",
+      "thesis": "One exercise owns the viewport, next one a flick away.",
+      "palette": [
+        "#000000",
+        "#ffffff",
+        "#ff3b7f"
+      ],
+      "materials": [
+        "full-bleed media",
+        "glyph rail"
+      ],
+      "viewport": "The current exercise GIF full-screen with a right rail.",
+      "risk": "Media-first; most of the app is lists and numbers.",
+      "case": "The app already has a focus view that does this.",
+      "kept": "Already present in the focus workout view; no new raise.",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-vertical-video-feed-surface-hero.webp"
+    },
+    {
+      "id": "challenger-exposure",
+      "label": "Darkroom Exposure Record",
+      "verdict": "declined",
+      "lineage": "printer's zone sheets",
+      "thesis": "Translucent sheets, a zone ramp, one magenta.",
+      "palette": [
+        "#2a2a2a",
+        "#9a9a9a",
+        "#e8e8e8",
+        "#e0218a"
+      ],
+      "materials": [
+        "tracing overlays",
+        "hatching"
+      ],
+      "viewport": "Overlapping sheets of training load.",
+      "risk": "Darkroom world is foreign to her clients.",
+      "case": "Loses both axes.",
+      "kept": "One reserved hue that only ever means one thing.",
+      "hero": "https://impeccable.style/worlds/cards/operate-b-exposure-record-zone-sheets-hero.webp"
+    }
+  ],
+  "reroll": {
+    "registers": [
+      "safer",
+      "bolder"
+    ]
+  },
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "A clean white fitness app with rounded cards, a pink accent and a bottom tab bar, done impeccably.",
+    "palette": [
+      "#ffffff",
+      "#1c1c1e",
+      "#ec4f8c",
+      "#f6f6f8"
+    ],
+    "materials": [
+      "rounded cards",
+      "activity rings",
+      "system type"
+    ],
+    "viewport": "Greeting, today's workout card, weekly rings, tab bar.",
+    "risk": "Indistinguishable from every other fitness app by design."
+  },
+  "steer": true,
+  "seed": "d1b9581b",
+  "chosen": "model-pick"
+}

@@ -15,6 +15,7 @@ import { Button } from '../components/ui.jsx'
 import { tappable } from '../lib/use-sheet-keyboard.js'
 import { glyphOf } from '../lib/glyphs.js'
 import { dayNoteOf } from '../lib/day-notes.js'
+import CoachingCard from '../components/CoachingCard.jsx'
 
 // Home = what to do now + a quick glance. Deep charts & history live in Stats.
 export default function Home() {
@@ -102,9 +103,13 @@ export default function Home() {
 
   return <div className="narrow">
     <div className="hdr">
-      <div><h1>{user ? t('Hi {0}', user.name) : 'openGym'}</h1><div className="sub">{today.toLocaleDateString(dateLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
-      <button className="iconbtn" onClick={() => nav('/settings')} aria-label={trouble ? t('Settings') + ', ' + t('Connection problem') : t('Settings')}><Icon name="gear" />{trouble && <span className="tab-dot" aria-hidden="true" />}</button>
+      <div><h1>{user ? t('Hi {0}', user.name) : 'Klora'}</h1><div className="sub">{today.toLocaleDateString(dateLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
+      <div className="hdr-actions">
+        {user && <button className="iconbtn" onClick={() => nav('/library')} aria-label={t('Exercises')}><Icon name="dumbbell" /></button>}
+        <button className="iconbtn" onClick={() => nav('/settings')} aria-label={trouble ? t('Settings') + ', ' + t('Connection problem') : t('Settings')}><Icon name="gear" />{trouble && <span className="tab-dot" aria-hidden="true" />}</button>
+      </div>
     </div>
+
 
     <div className="card">
       {/* A coach week runs by order, not by weekday, so its progress row stands in for the
@@ -126,14 +131,14 @@ export default function Home() {
           routine name behind a green Start tag and read as still outstanding (issue #4).
           An in-progress session still wins — that one is happening right now. Tapping the
           row keeps working, so a second session in one day is a tap away, just not urged. */}
-      <div className="today-row" {...tappable(onToday)}>
+      <div className={'today-row' + (S.active ? ' live' : doneToday ? ' done' : routine ? ' go' : ' rest')} {...tappable(onToday)}>
         <div className="row" style={{ gap: 9, minWidth: 0 }}>
           <span className="lrow-i" style={{ background: S.active ? 'var(--orange)' : doneToday ? 'var(--surface-3)' : routine ? 'var(--acc)' : 'var(--surface-3)' }}>
             <Icon name={S.active ? (editingSaved ? 'pencil' : 'play') : doneToday ? 'checkCircle' : routine ? glyphOf(routine.emoji) : 'moon'}
               style={doneToday && !S.active ? { color: 'var(--green)' } : undefined} />
           </span>
           <div style={{ minWidth: 0 }}>
-            <div className="lbl2">{t('Today')}</div>
+            <div className="lbl2 sr-only">{t('Today')}</div>
             <div className="ttl">{S.active ? (editingSaved ? S.active.name : t('{0} (in progress)', S.active.name))
               : doneToday ? (doneToday.name ? t('{0} (done)', doneToday.name) : t('Workout done'))
               : routine ? todayName : t('Rest day')}{todayOvr && routine && !doneToday ? ' · ' + t('rescheduled') : ''}</div>
@@ -158,16 +163,17 @@ export default function Home() {
       </div>}
     </div>
 
+    {user && <CoachingCard admin={!!user.admin} />}
+
     {/* Jump to the gym check-in cards (QR membership codes). Shown here as a quick tap on
         arrival at the gym; folds away per user via the "Gym check-in" switch in Settings. */}
     {S.checkIn !== false && (
       <div className="card tappable" style={{ cursor: 'pointer' }} {...tappable(() => nav('/checkin'))}>
         <div className="row between">
           <div className="row" style={{ gap: 9 }}>
-            <span className="lrow-i" style={{ background: 'var(--blue)' }}><Icon name="qr" /></span>
+            <span className="lrow-i" style={{ background: 'var(--rk-sky)', color: 'var(--rk-sky-ink)' }}><Icon name="qr" /></span>
             <div>
-              <div className="lbl2">{t('At the gym')}</div>
-              <div className="ttl">{t('Check in')}</div>
+              <div className="ttl">{t('Check in at the gym')}</div>
             </div>
           </div>
           <Icon name="chevronRight" className="chev" />

@@ -57,7 +57,7 @@ describe('Login: a code from another device', () => {
     mocks.config = { allow_guest: true }
     const page = mount(<Login />)
     const all = buttons(page)
-    expect(all.indexOf('Use a code from your other device')).toBe(all.indexOf('Create new profile') + 1)
+    expect(all.indexOf('Use a code from your other device')).toBe(all.indexOf('Sign in with passkey') + 1)
     act(() => button(page, 'Use a code from your other device').click())
     const sheet = mount(mocks.sheets[0](() => {}))
     expect(sheet.querySelector('h3').textContent).toBe('Add this device')

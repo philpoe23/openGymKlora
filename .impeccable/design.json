@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T00:00:00Z",
+  "title": "Design System: Klora Fitness",
+  "extensions": {
+    "colorMeta": {
+      "hot-rose": { "role": "primary", "displayName": "Hot Rose", "canonical": "#cf3a76", "tonalRamp": ["#3a0f24", "#5c1636", "#86204e", "#b02a62", "#cf3a76", "#e06d9b", "#f0a8c4", "#fbe3ed"] },
+      "hot-rose-deep": { "role": "primary", "displayName": "Deep Rose", "canonical": "#b02a62" },
+      "hot-rose-night": { "role": "primary", "displayName": "Night Rose", "canonical": "#e06d9b" },
+      "rack-rose": { "role": "secondary", "displayName": "Rose Weight", "canonical": "#f7c3d6", "tonalRamp": ["#5c1033", "#7f2350", "#a3416f", "#c86b93", "#e598b6", "#f7c3d6", "#fbdde8", "#fdf0f5"] },
+      "rack-lilac": { "role": "secondary", "displayName": "Lilac Weight", "canonical": "#d9cbf5", "tonalRamp": ["#33206b", "#4a3689", "#6552a8", "#8471c4", "#a99adc", "#d9cbf5", "#e9e1fa", "#f6f2fd"] },
+      "rack-mint": { "role": "secondary", "displayName": "Mint Weight", "canonical": "#bfe7d4", "tonalRamp": ["#114a33", "#1e6649", "#2f8562", "#4fa57f", "#82c7a6", "#bfe7d4", "#dbf2e7", "#f1faf5"] },
+      "rack-butter": { "role": "secondary", "displayName": "Butter Weight", "canonical": "#f8e6a0", "tonalRamp": ["#5a4100", "#7a5a08", "#9c7614", "#bf962e", "#ddbd5e", "#f8e6a0", "#fbf0c8", "#fdf9e8"] },
+      "rack-peach": { "role": "secondary", "displayName": "Peach Weight", "canonical": "#fbd2bd", "tonalRamp": ["#6b2a0c", "#8c3f1a", "#ad5a30", "#cc7c52", "#e8a585", "#fbd2bd", "#fde5d9", "#fef4ef"] },
+      "rack-sky": { "role": "secondary", "displayName": "Sky Weight", "canonical": "#c6e0f7", "tonalRamp": ["#123a63", "#1f5384", "#356fa6", "#5690c4", "#87b6e0", "#c6e0f7", "#deedfa", "#f1f7fd"] },
+      "blush-ground": { "role": "neutral", "displayName": "Blush Ground", "canonical": "#fbeff4", "tonalRamp": ["#3a1d2c", "#5e3b4c", "#8d7782", "#b99aa9", "#efd5e0", "#f7e6ed", "#fbeff4", "#fffbfc"] },
+      "plum-ink": { "role": "neutral", "displayName": "Plum Ink", "canonical": "#3a1d2c" },
+      "plum-night": { "role": "neutral", "displayName": "Plum Night", "canonical": "#1a0f16", "tonalRamp": ["#1a0f16", "#22141d", "#2c1b26", "#3a2532", "#4a3040", "#6a5060", "#a8949f", "#fcf0f5"] },
+      "night-ink": { "role": "neutral", "displayName": "Night Ink", "canonical": "#fcf0f5" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Sign-in hero only; one word may be hot rose." },
+      "headline": { "displayName": "Headline", "purpose": "Screen titles and the client detail name." },
+      "title": { "displayName": "Title", "purpose": "Today's pill, trainer card, sheet and panel headings." },
+      "title-sm": { "displayName": "Title Small", "purpose": "Row names, assignment and tappable card titles." },
+      "numeral": { "displayName": "Moulded Numeral", "purpose": "Every count: rack tiles, week days, session dates, invite codes." },
+      "body": { "displayName": "Body", "purpose": "Reading text in the platform face." },
+      "body-sm": { "displayName": "Body Small", "purpose": "Row subtitles and meta lines in secondary ink." },
+      "label": { "displayName": "Label", "purpose": "Badges, tile labels, tab labels." }
+    },
+    "shadows": [
+      { "name": "rest", "value": "0 1px 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(58,29,44,.05), 0 10px 24px -16px rgba(120,40,80,.32)", "purpose": "Cards, tiles, rows, chips, icon buttons on blush. Dark: 0 1px 0 rgba(255,255,255,.04) inset, 0 10px 24px -16px rgba(0,0,0,.7)." },
+      { "name": "lift", "value": "0 1px 0 rgba(255,255,255,.9) inset, 0 2px 4px rgba(58,29,44,.05), 0 20px 40px -20px rgba(120,40,80,.40)", "purpose": "Tab bar, sign-in panel, timer, toast, hovered rows. Dark: 0 1px 0 rgba(255,255,255,.06) inset, 0 18px 40px -18px rgba(0,0,0,.8)." },
+      { "name": "rose-glow", "value": "0 10px 22px -10px color-mix(in srgb, var(--acc) 70%, transparent)", "purpose": "Primary buttons, selected chip, Start plate, Start tag." },
+      { "name": "rose-glow-pressed", "value": "0 4px 10px -6px color-mix(in srgb, var(--acc) 70%, transparent)", "purpose": "Primary button while pressed (press-and-settle)." },
+      { "name": "weight-lip", "value": "inset 0 1px 0 rgba(255,255,255,.5), inset 0 -5px 0 rgba(0,0,0,.06)", "purpose": "Tier-filled pills: today's pill, trainer card; -4px on rack tiles, -3px on initials weights; thins to -2px on press." },
+      { "name": "attention-ring", "value": "inset 0 0 0 2px var(--acc)", "purpose": "A client who needs the trainer, a picked option, a new assignment; combined with rest." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(.16,1,.3,1)", "purpose": "All press-and-settle transitions." },
+      { "name": "fast", "value": "140ms", "purpose": "Press, hover and fill transitions." },
+      { "name": "med", "value": "220ms", "purpose": "Sheets and larger state changes (inherited from the base layer)." },
+      { "name": "press-settle", "value": "transform: translateY(1px) scale(.975)", "purpose": "Pills on :active; tiles scale .97, the Start plate translateY(2px) scale(.94)." }
+    ],
+    "breakpoints": [
+      { "name": "xs", "value": "360px" },
+      { "name": "sm", "value": "420px" },
+      { "name": "desktop", "value": "1000px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action on a surface: a hot rose pill with a rose glow that settles on press.",
+      "html": "<button class=\"ds-btn-primary\">Sign in with passkey</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: #cf3a76; color: #fff; border: none; border-radius: 999px; padding: 14px 20px; font: 600 17px/1.29 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; letter-spacing: -.012em; box-shadow: 0 10px 22px -10px rgba(207,58,118,.7); transition: transform 140ms cubic-bezier(.16,1,.3,1), box-shadow 140ms cubic-bezier(.16,1,.3,1), background 140ms; cursor: pointer; } .ds-btn-primary:hover { background: #b02a62; } .ds-btn-primary:active { transform: translateY(1px) scale(.975); box-shadow: 0 4px 10px -6px rgba(207,58,118,.7); } .ds-btn-primary:focus-visible { outline: 2.5px solid #cf3a76; outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet pill on a blush slab fill.",
+      "html": "<button class=\"ds-btn-secondary\">Message</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; background: #f7e6ed; color: #3a1d2c; border: none; border-radius: 999px; padding: 14px 20px; font: 600 17px/1.29 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; transition: transform 140ms cubic-bezier(.16,1,.3,1), background 140ms; cursor: pointer; } .ds-btn-secondary:hover { background: #efd5e0; } .ds-btn-secondary:active { transform: translateY(1px) scale(.975); } .ds-btn-secondary:focus-visible { outline: 2.5px solid #cf3a76; outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Slab-filled field with an inset separator ring that becomes a 2px rose ring on focus.",
+      "html": "<input class=\"ds-input\" placeholder=\"Invite code\">",
+      "css": ".ds-input { background: #fffbfc; color: #3a1d2c; border: none; border-radius: 16px; padding: 13px 16px; font: 400 17px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; box-shadow: inset 0 0 0 1px rgba(58,29,44,.13); caret-color: #cf3a76; outline: none; } .ds-input:focus { box-shadow: inset 0 0 0 2px #cf3a76; }"
+    },
+    {
+      "name": "Standing Badge",
+      "kind": "chip",
+      "refersTo": "standing-badge",
+      "description": "A client's standing as a tier pill: fill and ink together; 'Needs you' is the hot variant.",
+      "html": "<span class=\"ds-badge ds-butter\">Drifting</span> <span class=\"ds-badge ds-mint\">On track</span> <span class=\"ds-badge ds-hot\">Needs you</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font: 600 12px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif; letter-spacing: .005em; white-space: nowrap; } .ds-butter { background: #f8e6a0; color: #5a4100; } .ds-mint { background: #bfe7d4; color: #114a33; } .ds-hot { background: #cf3a76; color: #fff; }"
+    },
+    {
+      "name": "Card Slab",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Moulded vinyl slab: flat fill, thin top light, soft resting shadow.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-t\">2 week streak</div><div class=\"ds-card-s\">2 / 3 this week</div></div>",
+      "css": ".ds-card { background: #fffbfc; color: #3a1d2c; border-radius: 22px; padding: 18px; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(58,29,44,.05), 0 10px 24px -16px rgba(120,40,80,.32); } .ds-card-t { font: 600 22px/1.1 Rubik, system-ui, sans-serif; letter-spacing: -.02em; } .ds-card-s { margin-top: 4px; font: 400 13px -apple-system, system-ui, sans-serif; color: rgba(58,29,44,.7); }"
+    },
+    {
+      "name": "Today Pill",
+      "kind": "custom",
+      "refersTo": "today-pill",
+      "description": "The fattest pill on Home: today's session as a full tier weight with an inverted action tag.",
+      "html": "<button class=\"ds-today\"><span class=\"ds-today-m\"><span class=\"ds-today-t\">Glutes &amp; Legs A</span><span class=\"ds-today-s\">6 exercises</span></span><span class=\"ds-today-tag\">Start</span></button>",
+      "css": ".ds-today { display: flex; align-items: center; gap: 12px; width: 100%; text-align: start; border: none; background: #f7c3d6; color: #5c1033; border-radius: 24px; padding: 18px 18px 18px 16px; min-height: 84px; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -5px 0 rgba(0,0,0,.06); transition: transform 140ms cubic-bezier(.16,1,.3,1), box-shadow 140ms cubic-bezier(.16,1,.3,1); cursor: pointer; } .ds-today:active { transform: translateY(1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(0,0,0,.06); } .ds-today:focus-visible { outline: 2.5px solid #cf3a76; outline-offset: 3px; } .ds-today-m { flex: 1; display: flex; flex-direction: column; } .ds-today-t { font: 600 22px Rubik, system-ui, sans-serif; letter-spacing: -.018em; } .ds-today-s { font-size: 14px; opacity: .8; margin-top: 3px; } .ds-today-tag { background: #cf3a76; color: #fff; border-radius: 999px; padding: 8px 16px; font: 600 14px system-ui, sans-serif; box-shadow: 0 10px 22px -10px rgba(207,58,118,.7); }"
+    },
+    {
+      "name": "Week Rack",
+      "kind": "custom",
+      "refersTo": "today-pill",
+      "description": "Seven capsules: planned rose mix, done mint, today ringed in plum.",
+      "html": "<div class=\"ds-week\"><span class=\"ds-day ds-done\">19</span><span class=\"ds-day\">20</span><span class=\"ds-day ds-done\">21</span><span class=\"ds-day ds-today-d\">22</span><span class=\"ds-day ds-plan\">23</span><span class=\"ds-day\">24</span><span class=\"ds-day\">25</span></div>",
+      "css": ".ds-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; } .ds-day { display: grid; place-items: center; border-radius: 999px; padding: 14px 2px; background: #f7e6ed; color: #3a1d2c; font: 500 22px Rubik, system-ui, sans-serif; } .ds-done { background: #bfe7d4; color: #114a33; } .ds-plan { background: #fbdde8; } .ds-today-d { box-shadow: inset 0 0 0 2px #3a1d2c; font-weight: 700; }"
+    },
+    {
+      "name": "Floating Tab Bar",
+      "kind": "nav",
+      "refersTo": "tab-bar",
+      "description": "One floating slab with the rose Start weight-plate seated in its middle; the active tab is hot rose.",
+      "html": "<nav class=\"ds-tabbar\"><a class=\"ds-tab ds-on\">Home</a><a class=\"ds-tab\">Plan</a><a class=\"ds-tab ds-start\"><span class=\"ds-plate\">&#9654;</span>Start</a><a class=\"ds-tab\">Stats</a><a class=\"ds-tab\">Clients</a></nav>",
+      "css": ".ds-tabbar { display: flex; justify-content: space-around; align-items: flex-end; background: #fffbfc; border-radius: 30px; padding: 8px 6px 9px; margin-top: 36px; box-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 2px 4px rgba(58,29,44,.05), 0 20px 40px -20px rgba(120,40,80,.40); } .ds-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; font: 600 10.5px system-ui, sans-serif; color: rgba(58,29,44,.54); cursor: pointer; } .ds-tab.ds-on, .ds-start { color: #cf3a76; } .ds-tab:focus-visible { outline: 2.5px solid #cf3a76; outline-offset: 3px; border-radius: 12px; } .ds-plate { display: grid; place-items: center; width: 60px; height: 60px; margin-top: -30px; border-radius: 999px; background: #cf3a76; color: #fff; box-shadow: inset 0 0 0 5px #d65e8f, inset 0 0 0 7px #ba346a, 0 10px 22px -10px rgba(207,58,118,.7), 0 0 0 5px #fbeff4; transition: transform 140ms cubic-bezier(.16,1,.3,1); } .ds-start:active .ds-plate { transform: translateY(2px) scale(.94); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Pastel Dumbbell Rack",
+    "overview": "Load is colour. Klora is drawn as a rack of coated hand-weights: every tier of meaning (a client, a standing, a day, a session state) is one matte neoprene pastel with its own dark ink, and every surface is the moulded vinyl those weights are made of. Fills are flat, each carries a thin top light along its upper edge and a soft shadow where it rests on the blush ground. Nothing is outlined for decoration; separation comes from fill and resting shadow.\n\nThe world has two lights. Blush (default, light theme) is a bright gym floor: a pale pink ground, near-white slabs, plum ink. Plum night (dark theme) is the same rack under low light: a deep aubergine ground on which the pastels glow; the tier fills keep their daytime values in both themes. One hot rose is reserved for action and \"now\": Start, the primary button, the selected tab, the client who needs the trainer, the unread count. The system refuses both the near-black neon fitness dashboard and the beige wellness minimal.\n\nThe density is phone-first and generous: large tappable pills and slabs, a floating tab bar, Rubik moulded numerals for anything counted. Pressing anything settles it: it sinks a pixel and its shadow tightens, like a weight set down on a mat.",
+    "keyCharacteristics": [
+      "Six pastel rack tiers (rose, lilac, mint, butter, peach, sky), each a fill-plus-ink pair that travels together.",
+      "One hot rose for action and \"now\", never decoration.",
+      "Moulded vinyl slabs: flat fill, inset top light, soft resting shadow, bottom lip on tier-filled pills.",
+      "Pills everywhere you press; rounded slabs (22-28px) for everything that holds content.",
+      "Rubik (self-hosted variable, 300-900) for headings and numerals; the platform face for reading text.",
+      "Press-and-settle: 1px sink plus a tighter shadow on every pressable."
+    ],
+    "rules": [
+      { "name": "The One Rose Rule", "body": "Hot rose means \"press this\" or \"this is now\". If an element is neither, it is not hot rose; use the rose tier instead.", "section": "colors" },
+      { "name": "The Fill-Carries-Ink Rule", "body": "Text on a tier fill is always that tier's ink, never grey and never plum. A tier is applied as a pair (fill + ink) or not at all.", "section": "colors" },
+      { "name": "The Same-Weights-At-Night Rule", "body": "Tier fills do not darken for the dark theme. On plum, a client row takes only a 9% mix of its tier (22% on blush), but full tier surfaces (today's pill, rack tiles, badges, avatars) keep their daytime pastel.", "section": "colors" },
+      { "name": "The Moulded Numeral Rule", "body": "Anything counted (days, kilos, clients, sessions, codes) is set in Rubik. Sentences are not.", "section": "typography" },
+      { "name": "The Bold Word Rule", "body": "Inside a secondary-ink sentence, the fact that matters is a Rubik 600 word in full ink, not a separate stat block.", "section": "typography" },
+      { "name": "The Press-and-Settle Rule", "body": "Every pressable sinks 1px on press (pills also scale to 0.975, tiles to 0.97, the Start plate drops 2px and scales to 0.94) and its shadow tightens: the rose glow shrinks to `0 4px 10px -6px`, the weight lip thins from 5px to 2px. Easing is `cubic-bezier(.16,1,.3,1)` over 140ms. Nothing lifts on press.", "section": "elevation" },
+      { "name": "The Ring-Not-Raise Rule", "body": "Selection and attention are drawn as an inset ring (2px in the element's ink, or hot rose for \"needs you\"), never by lifting the element higher.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** give every tier of meaning (client, standing, day state, session state) one rack colour, and apply its fill and ink together.",
+      "**Do** keep hot rose for Start, primary actions, the active tab, \"needs you\" and unread counts only.",
+      "**Do** make every pressable a pill or a 22-28px slab that sinks 1px and tightens its shadow on press.",
+      "**Do** set counts, dates, weights and headings in Rubik 600; reading text in the platform face at 17px.",
+      "**Do** show selection and attention with a 2px inset ring, not a higher shadow.",
+      "**Do** keep tier fills at their daytime values on plum night; only mixed row tints drop to 9%."
+    ],
+    "donts": [
+      "**Don't** put grey or plum text on a tier fill; use the tier's ink.",
+      "**Don't** use hot rose as a tier, a decorative fill or a data colour; the rose tier exists for that.",
+      "**Don't** draw hairline borders around slabs; separation is fill plus resting shadow.",
+      "**Don't** add a third shadow height or lift elements on press.",
+      "**Don't** drift toward a near-black neon dashboard or a beige wellness minimal; the ground is blush or plum.",
+      "**Don't** introduce small tracked uppercase labels above headings; the only tracked uppercase line in the build is the wordmark's \"Fitness\" lockup."
+    ]
+  }
+}

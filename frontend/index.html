@@ -14,13 +14,13 @@
     document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
   } catch (e) {}
 </script>
-<title>openGym</title>
-<meta name="description" content="Personal gym & body weight tracker">
-<meta name="theme-color" content="#0c0e12">
+<title>Klora Fitness</title>
+<meta name="description" content="Training and coaching with Klora">
+<meta name="theme-color" content="#fbeff4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="openGym">
+<meta name="apple-mobile-web-app-title" content="Klora">
 <!-- use-credentials: browsers fetch the manifest without cookies, even same-origin; behind an auth
      proxy (Authelia, Cloudflare Access, Teleport…) that fetch is a login redirect and the Home Screen
      icon comes out generic. iOS 26 reads the icon from the manifest, so this is where it shows. -->
@@ -29,6 +29,14 @@
 <link rel="icon" type="image/png" href="icon-180.png">
 </head>
 <body>
+<!--
+THESIS: Load is colour. Klora is a rack of coated pastel hand-weights: every tier (a client, a standing, a day, a state) owns one matte neoprene colour. Refuses the near-black neon fitness dashboard and the beige wellness minimal.
+OWN-WORLD: blush ground #fbeff4 / plum night #1a0f16; plum ink #3a1d2c; one hot rose #cf3a76 for action and "now" only; rack tiers rose, lilac, mint, butter, peach, sky, each fill with its own ink. Moulded vinyl slabs (flat fill, thin top light, soft resting shadow), pills everywhere, Rubik numerals and headings.
+STORY: a client opens it in the gym, sees today as the fattest rose pill and taps Start; the trainer opens Clients, reads the rack of who needs her today, replies or sends the next block in minutes.
+FIRST VIEWPORT: Home: Rubik greeting top-left, week as seven rack capsules (planned rose, done mint, today plum ring), Today pill with a rose Start tag, floating rack tab bar with a rose weight-plate Start seated in its middle.
+FORM: Pastel Dumbbell Rack, #1 on my grounded list (model pick), seed d1b9581b. Signature: press-and-settle, every pill sinks 1px and its shadow tightens.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+-->
 <div id="root"></div>
 <script type="module" src="/src/main.jsx"></script>
 </body>

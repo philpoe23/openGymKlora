@@ -666,6 +666,13 @@ paths:
                 name: { type: string, description: 'The original field: a profile name, or an e-mail address.' }
                 email: { type: string, description: An e-mail address only. }
                 password: { type: string, maxLength: 256 }
+                token:
+                  type: boolean
+                  description: |
+                    `true` asks for the session token in the response body as well (a native
+                    client with no cookie jar shared with the API sends it back as
+                    `Authorization: Bearer <token>`). Any other value, or none, leaves the
+                    response as the browser gets it.
             examples:
               byName: { value: { identifier: "Ada", password: "correct horse battery staple" } }
               byEmail: { value: { identifier: "ada@example.com", password: "correct horse battery staple" } }
@@ -683,6 +690,11 @@ paths:
                 type: object
                 properties:
                   user: { $ref: '#/components/schemas/SessionUser' }
+                  token:
+                    type: string
+                    description: |
+                      Only when the request had `token: true`. The same signed session value
+                      the cookie carries, for `Authorization: Bearer <token>`.
         '400':
           description: Name or password missing.
           content:
@@ -2354,6 +2366,390 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
               example: { error: "no such code" }
 
+  /api/trainer/clients:
+    get:
+      tags: [admin]
+      operationId: trainerClients
+      summary: 'Trainer: every client with training and check-in summary'
+      description: Every non-admin profile, with workouts logged this week and in the last 28 days, unread check-ins and routines waiting to be added.
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/client:
+    get:
+      tags: [admin]
+      operationId: trainerClient
+      summary: 'Trainer: one client's notes, assignments and check-ins'
+      description: Opening it marks the client's check-ins as read by the trainer.
+      parameters:
+        - { name: id, in: query, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/client/note:
+    post:
+      tags: [admin]
+      operationId: trainerNoteAdd
+      summary: 'Trainer: add a private note on a client'
+      description: Notes are never shown to the client.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, text]
+              properties:
+                id: { type: string }
+                text: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/client/note/delete:
+    post:
+      tags: [admin]
+      operationId: trainerNoteDelete
+      summary: 'Trainer: delete a note'
+      description: Removes one note.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, noteId]
+              properties:
+                id: { type: string }
+                noteId: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/client/assign:
+    post:
+      tags: [admin]
+      operationId: trainerAssign
+      summary: 'Trainer: send a client routines'
+      description: `bundle` is a plan file (the plan-share format). The client adds it to their own plan from their device.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, bundle]
+              properties:
+                id: { type: string }
+                name: { type: string }
+                note: { type: string }
+                bundle: { type: object }
+                programId: { type: string, description: The library program it came from, if any. }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/client/assign/withdraw:
+    post:
+      tags: [admin]
+      operationId: trainerAssignWithdraw
+      summary: 'Trainer: take back an assignment not yet added'
+      description: An assignment the client already added cannot be withdrawn.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, assignmentId]
+              properties:
+                id: { type: string }
+                assignmentId: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/client/message:
+    post:
+      tags: [admin]
+      operationId: trainerMessage
+      summary: 'Trainer: reply in a client's check-ins'
+      description: Appends to the thread.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, text]
+              properties:
+                id: { type: string }
+                text: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/programs:
+    get:
+      tags: [admin]
+      operationId: trainerPrograms
+      summary: 'Trainer: the program library'
+      description: Every program without its bundle, with how many clients have been sent each.
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/trainer/program:
+    get:
+      tags: [admin]
+      operationId: trainerProgram
+      summary: 'Trainer: one program'
+      description: The program with its plan bundle, for the editor.
+      parameters:
+        - { name: id, in: query, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such program.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/trainer/program/save:
+    post:
+      tags: [admin]
+      operationId: trainerProgramSave
+      summary: 'Trainer: create or update a program'
+      description: Upserts by `id` (a new id creates one). `bundle` is a plan file holding the program days.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [bundle]
+              properties:
+                id: { type: string }
+                name: { type: string }
+                note: { type: string }
+                bundle: { type: object }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Not a plan bundle with at least one day, or the library is full.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+  /api/trainer/program/delete:
+    post:
+      tags: [admin]
+      operationId: trainerProgramDelete
+      summary: 'Trainer: delete a program'
+      description: Clients who were sent it keep their copy.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id]
+              properties:
+                id: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Not a plan bundle with at least one day, or the library is full.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404':
+          description: No such program.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /api/client/training:
+    get:
+      tags: [data]
+      operationId: clientTraining
+      summary: 'Client: assignments and check-ins from the trainer'
+      description: Everything but the trainer's private notes. `?read=1` marks the thread read.
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/client/message:
+    post:
+      tags: [data]
+      operationId: clientMessage
+      summary: 'Client: send the trainer a check-in'
+      description: Appends to the thread.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /api/client/assignment/accept:
+    post:
+      tags: [data]
+      operationId: clientAssignmentAccept
+      summary: 'Client: mark an assignment added to the plan'
+      description: The routines themselves are merged on the device.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assignmentId]
+              properties:
+                assignmentId: { type: string }
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema: { type: object }
+        '400':
+          description: Empty text, or the assignment is not a plan bundle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404':
+          description: No such client, note or assignment.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
   /api/admin/audit:
     get:
       tags: [admin]

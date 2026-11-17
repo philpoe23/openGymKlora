@@ -1,0 +1,459 @@
+/* ============================================================================
+   Klora Fitness — the Pastel Dumbbell Rack
+   ----------------------------------------------------------------------------
+   Loaded after index.css, which keeps the layout and behaviour; this sheet owns
+   the visual world. The idea, in one line: load is colour. A rack of coated hand-
+   weights is the system — every tier (a client, a standing, a muscle, a state)
+   has its own matte neoprene colour, and the surfaces are the moulded vinyl those
+   weights are made of: flat fill, a thin top light, a soft shadow where it rests.
+
+   Rules:
+   1. One hot rose (--acc) is the action: Start, the primary button, "now".
+   2. The rack tiers (--rk-*) are pastel fills with their own ink. Never text on
+      a tier in grey; always the tier's ink.
+   3. Everything you press is a pill or a rounded slab, and pressing it settles:
+      it sinks a pixel and its shadow tightens, like a weight set down on a mat.
+   4. Rubik, self-hosted, carries headings and numbers (the moulded numerals);
+      the platform face carries reading text.
+   ========================================================================== */
+
+@font-face{
+  font-family:'Rubik';font-style:normal;font-weight:300 900;font-display:swap;
+  src:url('./fonts/rubik-latin-wght.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Rubik';font-style:normal;font-weight:300 900;font-display:swap;
+  src:url('./fonts/rubik-latin-ext-wght.woff2') format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* ---------------------------------------------------------------- tokens -- */
+/* Plum night: the rack under low light. Deep aubergine ground, the pastels glow. */
+:root,:root[data-theme="dark"]{
+  --bg:#1a0f16; --bg-el:#22141d;
+  --surface:#2c1b26; --surface-2:#3a2532; --surface-3:#4a3040;
+  --label:#fcf0f5;
+  --label-2:rgba(252,240,245,.70);
+  --label-3:rgba(252,240,245,.48);
+  --label-4:rgba(252,240,245,.20);
+  --sep:rgba(252,240,245,.13); --sep-op:rgba(252,240,245,.10);
+
+  --blue:#8fbcf0; --green:#86dbb4; --red:#ff7b8a; --orange:#ffb27f;
+  --yellow:#f6d873; --teal:#7fd3df; --indigo:#b8a2f2; --pink:#f58cb5;
+  --purple:#c9a6f2; --mint:#86dbb4; --brown:#d1ad8f; --grey:#a8949f;
+
+  --rk-rose:#f7c3d6;   --rk-rose-ink:#5c1033;
+  --rk-lilac:#d9cbf5;  --rk-lilac-ink:#33206b;
+  --rk-mint:#bfe7d4;   --rk-mint-ink:#114a33;
+  --rk-butter:#f8e6a0; --rk-butter-ink:#5a4100;
+  --rk-peach:#fbd2bd;  --rk-peach-ink:#6b2a0c;
+  --rk-sky:#c6e0f7;    --rk-sky-ink:#123a63;
+
+  --shadow-rest:0 1px 0 rgba(255,255,255,.04) inset,0 10px 24px -16px rgba(0,0,0,.7);
+  --shadow-lift:0 1px 0 rgba(255,255,255,.06) inset,0 18px 40px -18px rgba(0,0,0,.8);
+  --shadow-acc:0 10px 22px -10px color-mix(in srgb,var(--acc) 70%,transparent);
+
+  --r-sm:12px; --r:16px; --r-lg:22px; --r-xl:28px; --r-card:22px;
+  --font-display:'Rubik',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:dark;
+}
+
+/* Blush: the default. A bright gym floor and a desk by a window. */
+:root[data-theme="light"]{
+  --bg:#fbeff4; --bg-el:#fdf6f9;
+  --surface:#fffbfc; --surface-2:#f7e6ed; --surface-3:#efd5e0;
+  --label:#3a1d2c;
+  --label-2:rgba(58,29,44,.70);
+  --label-3:rgba(58,29,44,.54);
+  --label-4:rgba(58,29,44,.20);
+  --sep:rgba(58,29,44,.13); --sep-op:rgba(58,29,44,.10);
+
+  --blue:#3f74c4; --green:#23885e; --red:#d1334a; --orange:#c8601f;
+  --yellow:#a87a00; --teal:#1f8797; --indigo:#6a4fc9; --pink:#cf3a76;
+  --purple:#8a55cf; --mint:#23885e; --brown:#94664a; --grey:#8d7782;
+
+  --shadow-rest:0 1px 0 rgba(255,255,255,.9) inset,0 1px 2px rgba(58,29,44,.05),0 10px 24px -16px rgba(120,40,80,.32);
+  --shadow-lift:0 1px 0 rgba(255,255,255,.9) inset,0 2px 4px rgba(58,29,44,.05),0 20px 40px -20px rgba(120,40,80,.40);
+  color-scheme:light;
+}
+
+/* The rose accent is Klora's own: pink is the default preset, drawn in her rose. */
+:root[data-accent="pink"]{--acc:var(--pink);--acc-2:#b02a62;--on-acc:#fff}
+:root[data-theme="dark"][data-accent="pink"]{--acc-2:#e06d9b;--on-acc:#3a0f24}
+:root[data-theme="light"][data-accent="pink"]{--acc-2:#b02a62;--on-acc:#fff}
+:root{--acc-soft:color-mix(in srgb,var(--acc) 15%,transparent);--acc-line:color-mix(in srgb,var(--acc) 36%,transparent)}
+
+/* ------------------------------------------------------- browser surfaces -- */
+::selection{background:color-mix(in srgb,var(--acc) 28%,transparent);color:var(--label)}
+html{scrollbar-color:var(--surface-3) transparent;accent-color:var(--acc)}
+input,textarea{caret-color:var(--acc)}
+:focus-visible{outline:2.5px solid var(--acc);outline-offset:3px;border-radius:12px}
+a{text-underline-offset:3px}
+
+/* ------------------------------------------------------------------- type -- */
+.hdr h1,.card .big,.sheet h3,.kl-display,.tr-num,.wday .num{font-family:var(--font-display)}
+.hdr h1{font-weight:600;letter-spacing:-.022em;text-wrap:balance}
+.hdr .sub{font-size:15px}
+.card .big{font-weight:600;letter-spacing:-.02em}
+.sheet h3{font-weight:600;letter-spacing:-.016em;font-size:21px}
+h4.sec,.card h2,.sect-t{font-weight:500;color:var(--label-2)}
+
+/* ------------------------------------------------------- neoprene slabs -- */
+.card,.tile,.item,.sect-b,.ci-card{box-shadow:var(--shadow-rest)}
+.card{border-radius:var(--r-card);padding:18px}
+.item{border-radius:18px}
+.tile{border-radius:20px}
+.thumb{border-radius:12px}
+.lrow-i{border-radius:10px;color:var(--on-tint,#fff)}
+:root[data-theme="dark"] .lrow-i{--on-tint:#1a0f16}
+
+/* ----------------------------------------------------------------- pills -- */
+.btn{
+  border-radius:999px;padding:14px 20px;
+  transition:transform var(--fast) var(--ease),box-shadow var(--fast) var(--ease),background var(--fast),opacity var(--fast);
+}
+.btn:active{transform:translateY(1px) scale(.975)}
+.btn.primary{box-shadow:var(--shadow-acc)}
+.btn.primary:active{box-shadow:0 4px 10px -6px color-mix(in srgb,var(--acc) 70%,transparent)}
+.btn.sm{border-radius:999px;padding:8px 15px}
+.btn.xs{border-radius:999px}
+.btn.ghost:active,.btn.plain:active{background:var(--acc-soft)}
+@media (hover:hover){
+  .btn.primary:hover{background:var(--acc-2)}
+  .btn:not(.primary):not(.ghost):not(.plain):not(.danger):not(.tinted):hover{background:var(--surface-3)}
+}
+.iconbtn{background:var(--surface);box-shadow:var(--shadow-rest)}
+.chip{border-radius:999px;background:var(--surface);box-shadow:var(--shadow-rest)}
+.chip.on{box-shadow:var(--shadow-acc)}
+.tag{border-radius:999px;padding:3px 9px}
+
+.field,.input{background:var(--surface);border-radius:var(--r);box-shadow:inset 0 0 0 1px var(--sep)}
+.field:focus,.input:focus{box-shadow:inset 0 0 0 2px var(--acc)}
+.search .input,:root[data-theme="light"] .search .input{background:var(--surface);border-radius:999px;box-shadow:inset 0 0 0 1px var(--sep)}
+
+.seg,:root[data-theme="light"] .seg{background:var(--surface-2);border-radius:999px;padding:3px}
+.seg-sel,:root[data-theme="light"] .seg-sel{border-radius:999px;top:3px;bottom:3px;inset-inline-start:3px;width:calc((100% - 6px)/var(--n));background:var(--surface);box-shadow:var(--shadow-rest)}
+.sw{background:var(--surface-3)}
+
+/* ------------------------------------------------------------- week rack -- */
+/* Seven capsules on a rack. Planned days carry the rose tier, done days are filled mint
+   with their number in mint ink, today wears a plum ring. */
+.week{gap:6px}
+.wday{border-radius:999px;padding:9px 2px 10px;background:var(--surface-2)}
+.wday .num{font-weight:500}
+.wday .lbl{letter-spacing:.06em}
+.wday:has(.dot.plan),.wday:has(.dot.ovr){background:color-mix(in srgb,var(--rk-rose) 55%,var(--surface))}
+.wday:has(.dot.done){background:var(--rk-mint)}
+.wday:has(.dot.done) .num,.wday:has(.dot.done) .lbl{color:var(--rk-mint-ink)}
+.wday:has(.dot.noted){background:var(--rk-lilac)}
+.wday:has(.dot.noted) .num,.wday:has(.dot.noted) .lbl{color:var(--rk-lilac-ink)}
+:root[data-theme="dark"] .wday:has(.dot.plan) .num,:root[data-theme="dark"] .wday:has(.dot.ovr) .num{color:var(--label)}
+.wday .dot{width:14px;height:4px;border-radius:99px}
+.wday .dot.done{background:var(--rk-mint-ink)}
+.wday .dot.plan{background:var(--acc)}
+.wday .dot.noted{background:var(--rk-lilac-ink)}
+.wday.today{box-shadow:inset 0 0 0 2px var(--label)}
+.wday.today .num{background:none;color:inherit;width:auto;height:auto;margin:4px 0;font-weight:700}
+.wday:active{transform:translateY(1px);filter:brightness(.97)}
+
+/* Today's session: the fattest pill on the screen, a full weight in its tier. Planned is rose,
+   done is mint, in progress is peach, a rest day is lilac. Same fills in both themes. */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.today-row,:root[data-theme="dark"] .today-row{
+  --tf:var(--rk-rose);--ti:var(--rk-rose-ink);
+  background:var(--tf);color:var(--ti);border-radius:24px;padding:18px 18px 18px 16px;margin-top:14px;min-height:84px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -5px 0 rgba(0,0,0,.06);
+  transition:transform var(--fast) var(--ease),box-shadow var(--fast) var(--ease);
+}
+.today-row.done,:root[data-theme="dark"] .today-row.done{--tf:var(--rk-mint);--ti:var(--rk-mint-ink)}
+.today-row.live,:root[data-theme="dark"] .today-row.live{--tf:var(--rk-peach);--ti:var(--rk-peach-ink)}
+.today-row.rest,:root[data-theme="dark"] .today-row.rest{--tf:var(--rk-lilac);--ti:var(--rk-lilac-ink)}
+.today-row:active,:root[data-theme="dark"] .today-row:active{background:var(--tf);transform:translateY(1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.06)}
+.today-row .ttl{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.018em;color:var(--ti)}
+.today-row .ss{color:var(--ti);opacity:.8;font-size:14px;margin-top:3px;text-wrap:pretty}
+.today-row .ttl{text-wrap:balance}
+.today-row .lrow-i{width:40px;height:40px;border-radius:14px;font-size:21px;background:rgba(255,255,255,.55)!important;color:var(--ti)!important}
+.today-row .lrow-i .icn{color:var(--ti)!important}
+.today-row .chev{color:var(--ti)}
+.today-row .tag,.today-row .tag.acc{background:var(--ti)!important;color:var(--tf)!important;padding:8px 16px;font-size:14px;font-weight:600}
+.today-row.go .tag.acc{background:var(--acc)!important;color:var(--on-acc)!important;box-shadow:var(--shadow-acc)}
+@media (hover:hover){.today-row:hover,:root[data-theme="light"] .today-row:hover,:root[data-theme="dark"] .today-row:hover{background:var(--tf);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -5px 0 rgba(0,0,0,.08),var(--shadow-rest)}}
+
+/* A small line from the coaching side under Today, never bigger than it. */
+.pt-card.kl-nudge{padding:12px 14px;border-radius:22px;gap:12px;margin-bottom:12px}
+.pt-card.kl-nudge h2{font-size:17px}
+.pt-card.kl-nudge p{font-size:13px}
+.card .lbl2{font-size:13px;color:var(--label-2)}
+.card.tappable .ttl{font-family:var(--font-display);font-weight:500;font-size:18px}
+
+/* --------------------------------------------------------------- tab bar -- */
+/* A floating rack: one rounded slab with the Start plate seated in the middle. */
+#tabbar,:root[data-theme="light"] #tabbar{
+  left:12px;right:12px;bottom:calc(10px + var(--sab));
+  padding:8px 6px 9px;border:none;border-radius:30px;
+  background:color-mix(in srgb,var(--surface) 96%,transparent);
+  box-shadow:var(--shadow-lift);
+}
+#tabbar button{font-weight:600;font-size:10.5px;color:var(--label-3)}
+#tabbar button .icn{color:var(--label-2)}
+#tabbar button.on{color:var(--acc)}
+#tabbar button.on .icn{color:var(--acc)}
+/* The Start plate: a weight plate seen face-on, rose disc with a moulded inner ring. */
+#tabbar button.start{margin-top:-30px}
+#tabbar button.start .cir{
+  width:60px;height:60px;
+  box-shadow:inset 0 0 0 5px color-mix(in srgb,#fff 22%,var(--acc)),inset 0 0 0 7px color-mix(in srgb,#000 10%,var(--acc)),var(--shadow-acc),0 0 0 5px var(--bg);
+}
+#tabbar button.start.rec .cir{box-shadow:inset 0 0 0 5px color-mix(in srgb,#fff 25%,var(--orange)),0 0 0 5px var(--bg),0 10px 22px -10px var(--orange)}
+#tabbar button.start:active .cir{transform:translateY(2px) scale(.94)}
+.tab-dot{box-shadow:0 0 0 2px var(--surface)}
+#app{padding-bottom:calc(104px + var(--sab))}
+#timer{bottom:calc(98px + var(--sab));border-radius:var(--r-lg);box-shadow:var(--shadow-lift)}
+#toast{bottom:calc(106px + var(--sab));background:var(--label);color:var(--bg);box-shadow:var(--shadow-lift)}
+#toast .toast-act{color:color-mix(in srgb,var(--acc) 60%,var(--bg))}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  #tabbar,:root[data-theme="light"] #tabbar{background:var(--surface)}
+  #toast{background:var(--label)}
+}
+
+/* ---------------------------------------------------------------- sheets -- */
+.sheet,:root[data-theme="light"] .sheet{background:var(--bg-el);border-radius:var(--r-xl) var(--r-xl) 0 0}
+.picker-search,:root[data-theme="light"] .picker-search{background:var(--bg-el)}
+.center,:root[data-theme="light"] .center{background:var(--bg-el);border-radius:var(--r-xl)}
+.sheet .grab{background:var(--surface-3);width:42px}
+
+@media (min-width:1000px){
+  #tabbar,:root[data-theme="light"] #tabbar{left:50%;right:auto;width:540px;bottom:18px;border:none;border-radius:30px}
+  #timer{bottom:118px}
+}
+
+/* =========================================================================
+   Rack primitives used by the Klora screens
+   ========================================================================= */
+/* A tier is set with data-tier="0..5" or class rk-<name>; fill + ink travel together. */
+.rk{--tf:var(--rk-rose);--ti:var(--rk-rose-ink)}
+.rk[data-tier="1"]{--tf:var(--rk-lilac);--ti:var(--rk-lilac-ink)}
+.rk[data-tier="2"]{--tf:var(--rk-mint);--ti:var(--rk-mint-ink)}
+.rk[data-tier="3"]{--tf:var(--rk-butter);--ti:var(--rk-butter-ink)}
+.rk[data-tier="4"]{--tf:var(--rk-peach);--ti:var(--rk-peach-ink)}
+.rk[data-tier="5"]{--tf:var(--rk-sky);--ti:var(--rk-sky-ink)}
+.rk-rose{--tf:var(--rk-rose);--ti:var(--rk-rose-ink)}
+.rk-lilac{--tf:var(--rk-lilac);--ti:var(--rk-lilac-ink)}
+.rk-mint{--tf:var(--rk-mint);--ti:var(--rk-mint-ink)}
+.rk-butter{--tf:var(--rk-butter);--ti:var(--rk-butter-ink)}
+.rk-peach{--tf:var(--rk-peach);--ti:var(--rk-peach-ink)}
+.rk-sky{--tf:var(--rk-sky);--ti:var(--rk-sky-ink)}
+
+/* A hand-weight: the client's initials moulded into a pastel capsule. */
+.kl-av{
+  flex:none;display:inline-grid;place-items:center;width:46px;height:46px;border-radius:16px;
+  background:var(--tf);color:var(--ti);font-family:var(--font-display);font-weight:600;font-size:17px;
+  letter-spacing:-.01em;box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 0 rgba(0,0,0,.06);
+}
+.kl-av.lg{width:64px;height:64px;border-radius:22px;font-size:24px}
+
+/* A standing badge — the word, in its tier. */
+.kl-badge{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;
+  background:var(--tf);color:var(--ti);font-size:12px;font-weight:600;letter-spacing:.005em;white-space:nowrap;
+}
+.kl-badge .icn{font-size:12px;--icon-stroke:2.4}
+.kl-badge.hot{background:var(--acc);color:var(--on-acc)}
+
+/* =========================================================================
+   Sign in / join
+   ========================================================================= */
+.kl-login{min-height:calc(100dvh - var(--sat) - 40px);display:flex;flex-direction:column;justify-content:center;padding:12px 0 28px}
+.kl-mark{margin:0 0 22px -6px}
+.kl-mark img{display:block;width:180px;height:auto}
+.kl-hero{font-family:var(--font-display);font-weight:600;font-size:clamp(38px,11vw,54px);line-height:.98;letter-spacing:-.035em;margin-bottom:12px;text-wrap:balance}
+.kl-hero em{font-style:normal;color:var(--acc)}
+.kl-lede{color:var(--label-2);font-size:17px;line-height:1.4;max-width:34ch;margin-bottom:28px}
+.kl-panel{background:var(--surface);border-radius:28px;padding:18px;box-shadow:var(--shadow-lift)}
+.kl-panel .seg{margin-bottom:16px}
+.kl-panel h3{font-family:var(--font-display);font-weight:600;font-size:21px;letter-spacing:-.016em;margin-bottom:6px}
+.kl-panel .input,.kl-panel .field{background:var(--bg-el)}
+.kl-or{display:flex;align-items:center;gap:10px;color:var(--label-3);font-size:13px;margin:14px 0}
+.kl-or::before,.kl-or::after{content:'';flex:1;height:1px;background:var(--sep)}
+.kl-foot{color:var(--label-3);font-size:13px;line-height:1.5;text-align:center;margin-top:22px}
+.kl-weights{display:flex;gap:6px;margin:0 0 26px}
+.kl-weights span{height:8px;border-radius:99px;background:var(--tf);flex:1}
+.kl-weights span:nth-child(1){flex:3}
+.kl-weights span:nth-child(2){flex:2}
+@media (min-width:1000px){
+  .kl-login{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;max-width:980px;margin:0 auto;min-height:calc(100dvh - 120px)}
+  .kl-hero{font-size:72px}
+}
+
+/* =========================================================================
+   Trainer: the roster
+   ========================================================================= */
+.tr-rack{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:18px}
+.tr-weight{
+  border-radius:22px;padding:12px 12px 11px;background:var(--tf);color:var(--ti);
+  display:flex;flex-direction:column;gap:2px;min-width:0;text-align:start;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -4px 0 rgba(0,0,0,.05);
+  transition:transform var(--fast) var(--ease);
+}
+button.tr-weight:active{transform:translateY(1px) scale(.97)}
+.tr-weight.on{box-shadow:inset 0 0 0 2px var(--ti)}
+.tr-num{font-weight:600;font-size:28px;line-height:1;letter-spacing:-.03em}
+.tr-lbl{font-size:12px;font-weight:600;line-height:1.2;opacity:.85;overflow-wrap:anywhere}
+@media (max-width:360px){.tr-rack{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.tr-list{display:flex;flex-direction:column;gap:10px}
+.tr-row{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:start;
+  background:var(--surface);border-radius:22px;padding:12px 14px 12px 12px;box-shadow:var(--shadow-rest);
+  transition:transform var(--fast) var(--ease),box-shadow var(--fast) var(--ease);position:relative;
+}
+.tr-row:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 4px 10px -8px rgba(120,40,80,.4)}
+@media (hover:hover){.tr-row:hover{box-shadow:var(--shadow-lift)}}
+.tr-row.needs{box-shadow:inset 0 0 0 2px var(--acc),var(--shadow-rest)}
+.tr-row-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.tr-row-t{font-family:var(--font-display);font-size:17px;font-weight:500;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-row-s{font-size:13px;color:var(--label-2);line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tr-row-e{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none}
+/* Each client's slab carries a low mix of their own rack colour. */
+.tr-row.rk{background:color-mix(in srgb,var(--tf) 22%,var(--surface))}
+:root[data-theme="dark"] .tr-row.rk{background:color-mix(in srgb,var(--tf) 9%,var(--surface))}
+/* A miniature of the week rack: one capsule per day, trained days mint, today ringed. */
+.kl-dayrack{display:inline-grid;grid-template-columns:repeat(7,8px);gap:3px}
+.kl-dayrack i{display:block;height:16px;border-radius:99px;background:var(--surface-3)}
+.kl-dayrack i.on{background:var(--rk-mint);box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--rk-mint-ink) 25%,transparent)}
+.kl-dayrack i.today{background:var(--surface-3);outline:1.5px solid var(--label);outline-offset:1px}
+.kl-dayrack i.on.today{background:var(--rk-mint);outline-color:var(--rk-mint-ink)}
+.kl-dayrack.wide{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:4px 0 12px}
+.kl-dayrack.wide i{height:22px}
+.tr-sentence{font-size:15px;line-height:1.45;color:var(--label-2)}
+.tr-sentence b{font-family:var(--font-display);font-weight:600;color:var(--label)}
+.tr-unread{
+  position:absolute;top:-4px;inset-inline-end:-4px;min-width:22px;height:22px;padding:0 6px;border-radius:99px;
+  background:var(--acc);color:var(--on-acc);font-size:12px;font-weight:700;display:grid;place-items:center;
+  box-shadow:0 0 0 3px var(--bg);
+}
+.tr-empty{background:var(--surface);border-radius:28px;padding:26px 20px;text-align:center;box-shadow:var(--shadow-rest)}
+.tr-empty .kl-weights{max-width:180px;margin:0 auto 18px}
+.tr-empty h3{font-family:var(--font-display);font-weight:600;font-size:21px;letter-spacing:-.016em;margin-bottom:6px}
+.tr-empty p{color:var(--label-2);font-size:15px;line-height:1.45;max-width:36ch;margin:0 auto 18px}
+
+.tr-invite{display:flex;align-items:center;gap:10px;background:var(--bg-el);border-radius:18px;padding:10px 10px 10px 16px;box-shadow:inset 0 0 0 1px var(--sep)}
+.tr-invite code{flex:1;min-width:0;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:.12em;overflow-wrap:anywhere}
+
+/* --------------------------------------------------------- client detail -- */
+.tr-head{display:flex;align-items:center;gap:14px;margin:6px 0 16px}
+.tr-head h1{font-family:var(--font-display);font-size:30px;font-weight:600;letter-spacing:-.022em;line-height:1.05;overflow-wrap:anywhere}
+.tr-head .sub{color:var(--label-2);font-size:14px;margin-top:4px}
+.tr-tabs{margin-bottom:16px}
+.tr-stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.tr-session{display:flex;gap:12px;align-items:flex-start;padding:12px 0}
+.tr-session+.tr-session{border-top:1px solid var(--sep)}
+.tr-session-d{flex:none;width:46px;text-align:center;border-radius:14px;padding:6px 0;background:var(--surface-2)}
+.tr-session-d b{display:block;font-family:var(--font-display);font-size:19px;font-weight:600;line-height:1}
+.tr-session-d span{font-size:11px;color:var(--label-2);text-transform:uppercase;letter-spacing:.05em}
+.tr-session-m{flex:1;min-width:0}
+.tr-session-t{font-weight:600;font-size:15px}
+.tr-session-s{font-size:13px;color:var(--label-2);margin-top:2px;line-height:1.4}
+
+/* The check-in thread: her bubbles in rose, theirs in the neutral slab. */
+.kl-thread{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.kl-msg{max-width:84%;padding:10px 14px;border-radius:20px;font-size:15px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+.kl-msg.them{align-self:flex-start;background:var(--surface-2);border-end-start-radius:6px}
+.kl-msg.me{align-self:flex-end;background:var(--rk-rose);color:var(--rk-rose-ink);border-end-end-radius:6px}
+.kl-msg time{display:block;font-size:11px;opacity:.7;margin-top:4px}
+.kl-compose{display:flex;gap:8px;align-items:flex-end}
+.kl-compose textarea{flex:1;min-height:48px;max-height:160px;resize:none;border-radius:24px;padding:13px 16px}
+.kl-compose .btn{width:48px;height:48px;padding:0;flex:none}
+.kl-quick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+
+.kl-note{background:var(--rk-butter);color:var(--rk-butter-ink);border-radius:18px;padding:12px 14px;font-size:15px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;position:relative}
+.kl-note+.kl-note{margin-top:8px}
+.kl-note time{display:block;font-size:12px;opacity:.75;margin-top:6px}
+.kl-note .iconbtn{position:absolute;top:6px;inset-inline-end:6px;width:30px;height:30px;font-size:14px;background:transparent;box-shadow:none;color:inherit}
+
+.kl-assign{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow-rest)}
+.kl-assign+.kl-assign{margin-top:8px}
+.kl-assign-m{flex:1;min-width:0}
+.kl-assign-t{font-family:var(--font-display);font-weight:500;font-size:17px;letter-spacing:-.01em}
+.kl-assign-s{font-size:13px;color:var(--label-2);margin-top:2px;line-height:1.4}
+.kl-pick{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:12px;border-radius:18px;background:var(--surface-2)}
+.kl-pick+.kl-pick{margin-top:8px}
+.kl-pick.on{background:color-mix(in srgb,var(--rk-rose) 55%,var(--surface));box-shadow:inset 0 0 0 2px var(--acc)}
+.kl-pick .kl-check{width:26px;height:26px;border-radius:99px;flex:none;display:grid;place-items:center;background:var(--surface);box-shadow:inset 0 0 0 2px var(--label-3);color:transparent;font-size:14px;--icon-stroke:2.6}
+.kl-pick.on .kl-check{box-shadow:none}
+.kl-pick.on .kl-check{background:var(--acc);color:var(--on-acc)}
+
+/* The client page's trainer card: her name on a rose weight. */
+.pt-card{display:flex;align-items:center;gap:14px;background:var(--rk-rose);color:var(--rk-rose-ink);border-radius:28px;padding:18px;margin-bottom:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -5px 0 rgba(0,0,0,.05)}
+.pt-card .kl-av{background:var(--surface);color:var(--acc)}
+.pt-card h2{font-family:var(--font-display);font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.1;color:inherit;margin:0}
+.pt-card p{font-size:14px;opacity:.85;margin-top:3px}
+.pt-new{background:var(--surface);border-radius:24px;padding:16px;box-shadow:inset 0 0 0 2px var(--acc),var(--shadow-rest);margin-bottom:10px}
+.pt-new .kl-assign-t{font-size:19px}
+.pt-new .pt-note{background:var(--surface-2);border-radius:14px;padding:10px 12px;margin:10px 0 12px;font-size:14px;line-height:1.45;white-space:pre-wrap}
+
+/* Home's trainer card: the clients who need her, racked side by side. */
+.kl-stack{display:flex;flex:none}
+.kl-stack .kl-av,.pt-card .kl-stack .kl-av{background:var(--tf);color:var(--ti);width:40px;height:40px;border-radius:14px;font-size:15px;box-shadow:0 0 0 3px var(--rk-rose)}
+.kl-stack .kl-av+.kl-av{margin-inline-start:-10px}
+
+/* Desktop: the roster racks two clients side by side instead of one phone column. */
+@media (min-width:1000px){
+  #app .narrow:has(.tr-list){max-width:1000px}
+  .tr-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tr-rack{max-width:none}
+}
+
+/* =========================================================================
+   Programs: the trainer's library and builder
+   ========================================================================= */
+.tr-switch{margin:0 0 16px}
+.pg-list{display:grid;gap:10px}
+.pg-card{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;text-align:start;padding:16px 16px 14px;border-radius:24px;background:var(--surface);box-shadow:var(--shadow-rest);transition:transform var(--fast) var(--ease),box-shadow var(--fast) var(--ease)}
+.pg-card:active{transform:translateY(1px)}
+@media (hover:hover){.pg-card:hover{box-shadow:var(--shadow-lift)}}
+.pg-card-t{font-family:var(--font-display);font-weight:600;font-size:19px;letter-spacing:-.014em}
+.pg-card-s{font-size:13px;color:var(--label-2)}
+.pg-card-n{font-size:14px;color:var(--label-2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pg-days{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pg-days span{padding:4px 10px;border-radius:99px;background:var(--tf);color:var(--ti);font-size:12.5px;font-weight:600;max-width:16ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.pg-status{margin-inline-start:auto;font-size:13px;color:var(--label-3);padding:4px 12px;border-radius:99px;background:var(--surface-2)}
+.pg-status.saving,.pg-status.dirty{color:var(--label-2)}
+.pg-status.error{color:var(--red)}
+.pg-title{display:block;width:100%;border:0;background:none;padding:0;color:var(--label);font-family:var(--font-display);font-weight:600;font-size:30px;letter-spacing:-.022em;line-height:1.1;outline:none}
+.pg-title::placeholder{color:var(--label-3)}
+.pg-sub{font-size:13px;color:var(--label-2);margin:6px 0 14px}
+.pg-note{margin-bottom:18px;resize:vertical}
+
+.pg-day{border-radius:26px;background:var(--surface);box-shadow:var(--shadow-rest);margin-bottom:14px;overflow:hidden}
+.pg-day-h{display:flex;align-items:center;gap:4px;padding:10px 10px 10px 12px;background:color-mix(in srgb,var(--tf) 70%,var(--surface))}
+.pg-day-n{width:30px;height:30px;flex:none;border-radius:99px;display:grid;place-items:center;background:var(--tf);color:var(--ti);font-family:var(--font-display);font-weight:600;font-size:15px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.06)}
+.pg-day-h .pg-day-name{flex:1;min-width:0;background:transparent;border-color:transparent;font-weight:600;font-size:17px;padding:6px 8px;margin-inline-end:2px}
+.pg-day-h .pg-day-name:focus{background:var(--surface)}
+.pg-day-h .iconbtn{width:34px;height:34px;flex:none;background:transparent}
+.pg-day-h .iconbtn:disabled{opacity:.3}
+.pg-day-body{padding:8px 12px 14px}
+.pg-ex-list{margin:6px 0 12px}
+.pg-ex{display:flex;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--sep)}
+.pg-ex:first-child{border-top:0}
+.pg-ex.in-ss{padding-inline-start:10px;box-shadow:inset 3px 0 0 var(--tf)}
+.pg-ex.linked{border-top-color:transparent}
+.pg-ex-open{display:flex;align-items:center;gap:12px;flex:1;min-width:0;text-align:start;padding:2px 0}
+.pg-ex-m{display:flex;flex-direction:column;min-width:0}
+.pg-ex-t{font-weight:600;font-size:15.5px;line-height:1.25;overflow-wrap:anywhere}
+.pg-ex-s{font-size:13px;color:var(--label-2);margin-top:2px}
+.pg-ex-ctl{display:flex;gap:2px;flex:none}
+.pg-ex-ctl .iconbtn{width:30px;height:30px;border-radius:10px;font-size:13px}
+.pg-ex-ctl .iconbtn:disabled{opacity:.3}
+.pg-ex-empty{font-size:14px;color:var(--label-3);padding:14px 2px 12px}
+.pg-send{margin:22px 0 4px}
+.pg-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--sep)}
+.pg-row:first-of-type{border-top:0}
+.pg-row-m{flex:1;min-width:0}
+.pg-own-t{width:100%;text-align:start;color:var(--label)}
+@media (min-width:1000px){
+  .pg-list{grid-template-columns:1fr 1fr}
+}

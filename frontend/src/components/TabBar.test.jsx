@@ -88,12 +88,23 @@ describe('the tab icons and labels', () => {
   const label = el => el.querySelector('span:last-child').textContent
   it('labels every tab and uses one icon per concept', () => {
     act(() => { root.render(<TabBar onStart={() => {}} />) })
-    expect(tabs().map(icon)).toEqual(['house', 'calendar', 'play', 'chart', 'dumbbell'])
-    expect(tabs().map(label)).toEqual(['Home', 'Plan', 'Start', 'Stats', 'Exercises'])
+    // Klora: a signed-in client's fifth tab is their coach page.
+    expect(tabs().map(icon)).toEqual(['house', 'calendar', 'play', 'chart', 'chat'])
+    expect(tabs().map(label)).toEqual(['Home', 'Plan', 'Start', 'Stats', 'Coach'])
 
     act(() => { useStore.getState().update(s => { s.active = { id: 'a', entries: [], cur: 0 } }, false) })
     expect(icon(tabs()[2])).toBe('play')
     expect(label(tabs()[2])).toBe('Resume')
+  })
+
+  it('gives the trainer her clients, and a guest the exercise library', () => {
+    act(() => { useStore.setState({ user: { id: 1, name: 'Klora', admin: true } }) })
+    act(() => { root.render(<TabBar onStart={() => {}} />) })
+    expect(icon(tabs()[4])).toBe('person')
+    expect(label(tabs()[4])).toBe('Clients')
+    act(() => { useStore.setState({ user: null }); localStorage.setItem('gym_guest', '1') })
+    act(() => { root.render(<TabBar onStart={() => {}} />) })
+    try { expect(label(tabs()[4])).toBe('Exercises') } finally { localStorage.removeItem('gym_guest') }
   })
 
   it('shows a minimized session’s running time, still named Resume', () => {

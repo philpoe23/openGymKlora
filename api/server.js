@@ -34,6 +34,7 @@ import { createMediaStore, mediaLimits, mediaConfig, MediaError, HASH_RE } from 
 import { effectiveRoutineId } from './queue.js';
 import { stampPut } from './sync-stamps.js';
 import { atomicWrite as durableWrite } from './durable.js';
+import * as training from './training.js';
 import { excusedOn, nudgeFor, nudgeWindowOpen, toneOf } from './nudge.js';
 
 const PORT = +(process.env.PORT || 3000);
@@ -162,6 +163,10 @@ function saveDb() {
 // Flushed before and after the rename (durable.js): a host reset must not bring back the file
 // the client was told had been replaced.
 function atomicWrite(file, content, mode) { durableWrite(file, content, mode); }
+// Trainer notes, assigned routines and check-ins, one file per client (training.js).
+const TRAINING = training.createTrainingStore(DATA, (f, c) => atomicWrite(f, c, 0o600));
+// The trainer's program library, one file for the instance (training.js).
+const PROGRAMS = training.createProgramStore(DATA, (f, c) => atomicWrite(f, c, 0o600));
 // How many earlier write ids a document keeps (`_wids`, see PUT /api/data): a device that last
 // synced more writes ago than this merges on its next pull instead of taking the server's copy.
 const WID_KEEP = 50;
@@ -622,8 +627,8 @@ function requireAdmin(req, res) {
   return user;
 }
 const expireCookie = name => `${name}=; Path=/; Max-Age=0; HttpOnly;${SECURE} SameSite=Lax`;
-function sessionCookie(user) {
-  const fresh = `${COOKIE}=${makeSession(user)}; Path=/; Max-Age=${SESSION_DAYS * 86400}; HttpOnly;${SECURE} SameSite=Lax`;
+function sessionCookie(user, value = makeSession(user)) {
+  const fresh = `${COOKIE}=${value}; Path=/; Max-Age=${SESSION_DAYS * 86400}; HttpOnly;${SECURE} SameSite=Lax`;
   // Signing in also retires any pre-upgrade cookie, so nobody is left carrying an unprefixed one
   // (or a shadowing copy of it) alongside the new session.
   return COOKIE === LEGACY_COOKIE ? [fresh] : [fresh, expireCookie(LEGACY_COOKIE)];
@@ -1275,7 +1280,11 @@ const passwordRoutes = {
       if (!still()) return json(res, 401, WRONG);
     }
     audit(req, 'auth.password.ok', { user });
-    json(res, 200, { user: publicUser(user) }, { 'Set-Cookie': sessionCookie(user) });
+    // A native client (the Flutter app) has no cookie jar shared with the API, so it asks for the
+    // same signed value in the body and sends it back as `Authorization: Bearer`.
+    const session = makeSession(user);
+    json(res, 200, { user: publicUser(user), ...(body.token === true ? { token: session } : {}) },
+      { 'Set-Cookie': sessionCookie(user, session) });
   },
 
   // For browsers that cannot make a passkey at all: plain http on a LAN address, some Firefox
@@ -2487,6 +2496,7 @@ const routes = {
     presence.delete(u.id);
     // The training history and any Coach credential of theirs, both outside db.json.
     try { fs.unlinkSync(stateFile(u.id)); } catch { /* already gone */ }
+    TRAINING.remove(u.id);
     try { coachConfig.clearProfileAuth(u.id); } catch { /* nothing stored */ }
     // Their photos and videos — the one place a profile's folder under uploads/ is removed.
     try { MEDIA.removeUser(u.id); } catch (e) { console.error('media: could not remove uploads of', u.id, e.message); }
@@ -2531,6 +2541,167 @@ const routes = {
     saveDb();
     audit(req, 'admin.invite.revoke', { user: admin, msg: inv.code });
     json(res, 200, { ok: true });
+  },
+
+  /* ---------- trainer: clients, notes, assigned routines, check-ins ---------- */
+  // The trainer is an admin; every other profile on the instance is one of her clients.
+  'GET /api/trainer/clients': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const now = Date.now();
+    const clients = db.users.filter(u => !isAdmin(u)).map(u => {
+      const S = readState(u.id) || {};
+      const workouts = records(S.workouts);
+      const last = workouts[workouts.length - 1];
+      return {
+        id: u.id, name: u.name, created: u.created || null, disabled: !!u.disabled,
+        workouts: workouts.length, lastWorkout: last ? last.d : null,
+        week: training.recentCount(workouts, 7, now), month: training.recentCount(workouts, 28, now),
+        days: training.recentDays(workouts, 28, now),
+        lastSync: lastSyncOf(u, S), live: livePresence(u.id),
+        ...training.rosterSummary(TRAINING.read(u.id))
+      };
+    });
+    json(res, 200, { clients, invite_only: INVITE_ONLY, now });
+  },
+
+  // The coaching half of one client: notes, assignments, thread. Opening it reads the thread.
+  'GET /api/trainer/client': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const uid = new URL(req.url, 'http://x').searchParams.get('id');
+    const u = db.users.find(x => x.id === uid);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    const rec = TRAINING.read(u.id);
+    rec.seen.trainer = Date.now();
+    TRAINING.save(u.id, rec);
+    json(res, 200, { id: u.id, name: u.name, notes: [...rec.notes].reverse(), assignments: [...rec.assignments].reverse().map(({ bundle, ...a }) => a), messages: rec.messages });
+  },
+
+  'POST /api/trainer/client/note': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    const rec = TRAINING.read(u.id);
+    const note = training.addNote(rec, body.text);
+    TRAINING.save(u.id, rec);
+    json(res, 200, { note });
+  },
+
+  'POST /api/trainer/client/note/delete': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    const rec = TRAINING.read(u.id);
+    if (!training.deleteNote(rec, text(body.noteId))) return json(res, 404, { error: 'no such note' });
+    TRAINING.save(u.id, rec);
+    json(res, 200, { ok: true });
+  },
+
+  'POST /api/trainer/client/assign': async (req, res) => {
+    const admin = requireAdmin(req, res); if (!admin) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    const rec = TRAINING.read(u.id);
+    const { bundle, ...assignment } = training.addAssignment(rec, { name: body.name, note: body.note, bundle: body.bundle, programId: body.programId });
+    TRAINING.save(u.id, rec);
+    audit(req, 'trainer.assign', { user: admin, msg: u.name + ': ' + assignment.name });
+    json(res, 200, { assignment });
+  },
+
+  'POST /api/trainer/client/assign/withdraw': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    const rec = TRAINING.read(u.id);
+    const r = training.withdrawAssignment(rec, text(body.assignmentId));
+    if (r === 'missing') return json(res, 404, { error: 'no such assignment' });
+    if (r === 'accepted') return json(res, 400, { error: 'already added to their plan' });
+    TRAINING.save(u.id, rec);
+    json(res, 200, { ok: true });
+  },
+
+  'POST /api/trainer/client/message': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const body = await readBody(req);
+    const u = db.users.find(x => x.id === body.id);
+    if (!u) return json(res, 404, { error: 'no such user' });
+    const rec = TRAINING.read(u.id);
+    const message = training.addMessage(rec, 'trainer', body.text);
+    TRAINING.save(u.id, rec);
+    json(res, 200, { message });
+  },
+
+  /* ---------- trainer: the program library ---------- */
+  // Each row counts the clients who have been sent that program (assignments keep its id).
+  'GET /api/trainer/programs': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const held = {};
+    for (const u of db.users.filter(x => !isAdmin(x))) {
+      const ids = new Set(TRAINING.read(u.id).assignments.map(a => a.programId).filter(Boolean));
+      for (const pid of ids) held[pid] = (held[pid] || 0) + 1;
+    }
+    json(res, 200, { programs: PROGRAMS.read().programs.map(p => training.programSummary(p, held[p.id] || 0)) });
+  },
+
+  'GET /api/trainer/program': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const pid = new URL(req.url, 'http://x').searchParams.get('id');
+    const p = PROGRAMS.read().programs.find(x => x.id === pid);
+    if (!p) return json(res, 404, { error: 'no such program' });
+    json(res, 200, { program: p });
+  },
+
+  'POST /api/trainer/program/save': async (req, res) => {
+    const admin = requireAdmin(req, res); if (!admin) return;
+    const body = await readBody(req);
+    const lib = PROGRAMS.read();
+    const { bundle, ...program } = training.saveProgram(lib, { id: body.id, name: body.name, note: body.note, bundle: body.bundle }, admin.id);
+    PROGRAMS.save(lib);
+    json(res, 200, { program });
+  },
+
+  'POST /api/trainer/program/delete': async (req, res) => {
+    if (!requireAdmin(req, res)) return;
+    const body = await readBody(req);
+    const lib = PROGRAMS.read();
+    if (!training.deleteProgram(lib, text(body.id))) return json(res, 404, { error: 'no such program' });
+    PROGRAMS.save(lib);
+    json(res, 200, { ok: true });
+  },
+
+  /* ---------- client: what the trainer sent, and the check-in thread ---------- */
+  'GET /api/client/training': async (req, res) => {
+    const user = readSession(req);
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    const trainer = db.users.find(isAdmin);
+    const rec = TRAINING.read(user.id);
+    const view = training.clientView(rec);
+    if (new URL(req.url, 'http://x').searchParams.get('read') === '1') { rec.seen.client = Date.now(); TRAINING.save(user.id, rec); }
+    json(res, 200, { trainer: trainer && trainer.id !== user.id ? { name: trainer.name } : null, ...view });
+  },
+
+  'POST /api/client/message': async (req, res) => {
+    const user = readSession(req);
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    const body = await readBody(req);
+    const rec = TRAINING.read(user.id);
+    const message = training.addMessage(rec, 'client', body.text);
+    TRAINING.save(user.id, rec);
+    json(res, 200, { message });
+  },
+
+  'POST /api/client/assignment/accept': async (req, res) => {
+    const user = readSession(req);
+    if (!user) return json(res, 401, { error: 'not signed in' });
+    const body = await readBody(req);
+    const rec = TRAINING.read(user.id);
+    const a = training.acceptAssignment(rec, text(body.assignmentId));
+    if (!a) return json(res, 404, { error: 'no such assignment' });
+    TRAINING.save(user.id, rec);
+    json(res, 200, { assignment: a });
   },
 
   /* ---------- activity log ---------- */
@@ -2680,6 +2851,11 @@ const server = http.createServer(async (req, res) => {
     if (e?.clientGone) { console.warn(key, 'client went away mid-body:', e.message); return; }
     if (e instanceof HttpError) {
       if (!res.headersSent) json(res, e.status, { error: e.message });
+      return;
+    }
+    // An empty note or message, or an assignment that is not a plan (training.js).
+    if (e?.input && e.status === 400) {
+      if (!res.headersSent) json(res, 400, { error: e.message });
       return;
     }
     // A refused upload or a missing file: the caller's to act on, never a logged 500.

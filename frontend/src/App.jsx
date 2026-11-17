@@ -42,6 +42,9 @@ import StructuralBalance from './views/StructuralBalance.jsx'
 import ProgressPhotos from './views/ProgressPhotos.jsx'
 import { SettingsRoute } from './views/Settings.jsx'
 import Admin from './views/Admin.jsx'
+import Trainer, { TrainerClient } from './views/Trainer.jsx'
+import Coaching from './views/Coaching.jsx'
+import Programs, { ProgramEdit } from './views/Programs.jsx'
 import CoachChat from './views/CoachChat.jsx'
 import Measurements from './views/Measurements.jsx'
 import CoachIntake from './views/CoachIntake.jsx'
@@ -62,7 +65,7 @@ function applyPrefs(theme, accent) {
   de.dataset.theme = resolveTheme(theme)
   applyAccent(de, accent, de.dataset.theme)
   const meta = document.querySelector('meta[name="theme-color"]')
-  if (meta) meta.content = de.dataset.theme === 'light' ? '#f2f2f7' : '#000000'
+  if (meta) meta.content = de.dataset.theme === 'light' ? '#fbeff4' : '#1a0f16'
   if (MOBILE) setSystemBarsLight(de.dataset.theme === 'light')
 }
 
@@ -228,6 +231,12 @@ function Shell() {
               <Route path="/coach/proposal" element={<Navigate to="/coach" replace />} />
               <Route path="/coach/setup" element={<CoachSetup />} />
               <Route path="/admin" element={user?.admin ? <Admin /> : <Navigate to="/home" replace />} />
+              {/* Klora: the trainer's client book (admins), and a client's coach page. */}
+              <Route path="/trainer" element={user?.admin ? <Trainer /> : <Navigate to="/home" replace />} />
+              <Route path="/trainer/programs" element={user?.admin ? <Programs /> : <Navigate to="/home" replace />} />
+              <Route path="/trainer/program/:pid" element={user?.admin ? <ProgramEdit /> : <Navigate to="/home" replace />} />
+              <Route path="/trainer/:id" element={user?.admin ? <TrainerClient /> : <Navigate to="/home" replace />} />
+              <Route path="/coaching" element={user && !user.admin ? <Coaching /> : <Navigate to="/home" replace />} />
               <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
           )}
